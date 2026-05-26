@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구체적으로 작성해보자! 프롬프트</title>
+    <style>
+        /* 웹폰트 불러오기 (눈누 - 프리텐다드 / Gmarket Sans 대용 선명한 고딕) */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f7f3ff; /* 연한 파스텔 보라빛 배경 */
+            color: #4a4a4a;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px; /* 태블릿 화면에 최적화된 컴팩트 사이즈 */
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(186, 157, 230, 0.2);
+            overflow: hidden;
+            border: 2px solid #e8daff;
+        }
+
+        /* 타이틀 바 */
+        .title-bar {
+            background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%); /* 파스텔 핑크-민트 그라데이션 */
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 2px solid #e8daff;
+        }
+
+        .title-bar h1 {
+            font-size: 22px;
+            color: #6c5ce7;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            letter-spacing: -0.5px;
+        }
+
+        /* 책갈피 탭 메뉴 */
+        .tab-menu {
+            display: flex;
+            background-color: #f1ebfc;
+            padding-top: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-bottom: 2px solid #e8daff;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            background-color: #e3d7ff;
+            color: #7b68ee;
+            border: 2px solid #e8daff;
+            border-bottom: none;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 4px;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab-btn:last-child {
+            margin-right: 0;
+        }
+
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #6c5ce7;
+            border-color: #e8daff;
+            padding-top: 16px;
+            top: 4px;
+            z-index: 2;
+        }
+
+        /* 콘텐츠 영역 */
+        .tab-content {
+            padding: 20px 15px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 입력 폼 스타일 */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: #6c5ce7;
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: 2px solid #e1d4f7;
+            border-radius: 12px;
+            background-color: #faf8ff;
+            color: #333333;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #a29bfe;
+            background-color: #ffffff;
+            box-shadow: 0 0 8px rgba(162, 155, 254, 0.3);
+        }
+
+        /* 플레이스홀더 스타일 (연하고 예쁘게) */
+        ::placeholder {
+            color: #b2bec3;
+            font-size: 14px;
+            opacity: 1;
+        }
+
+        /* 버튼 그룹 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: #ffb7ca; /* 파스텔 핑크 */
+            color: #ffffff;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        .btn-primary:hover {
+            background-color: #ffa3bc;
+        }
+
+        .btn-secondary {
+            background-color: #a29bfe; /* 파스텔 보라 */
+            color: #ffffff;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        .btn-secondary:hover {
+            background-color: #9287f7;
+        }
+
+        /* 결과 창 스타일 */
+        .result-section {
+            margin-top: 10px;
+            border-top: 2px dashed #e8daff;
+            padding-top: 20px;
+        }
+
+        .result-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #6c5ce7;
+            margin-bottom: 10px;
+        }
+
+        .output-box {
+            width: 100%;
+            height: 220px; /* 줄바꿈 형태를 여유롭게 볼 수 있도록 높이 상향 */
+            padding: 14px;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 2px solid #e8daff;
+            border-radius: 12px;
+            background-color: #fdfcff;
+            color: #4a4a4a;
+            resize: none;
+        }
+
+        .btn-copy {
+            background-color: #55efc4; /* 파스텔 민트/그린 */
+            color: #ffffff;
+            width: 100%;
+            margin-top: 10px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        .btn-copy:hover {
+            background-color: #2ed5a6;
+        }
+        
+        /* 알림 메시지 스타일 */
+        .toast {
+            display: none;
+            text-align: center;
+            background-color: #6c5ce7;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* 알림 이미지 생성 준비중 안내 */
+        .info-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #b2bec3;
+            font-size: 16px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 상단 타이틀 -->
+    <div class="title-bar">
+        <h1>구체적으로 작성해보자! 프롬프트 ✍️✨</h1>
+    </div>
+
+    <!-- 책갈피 탭 메뉴 -->
+    <div class="tab-menu">
+        <div class="tab-btn active" onclick="switchTab('intro')">나를 소개해요</div>
+        <div class="tab-btn" onclick="switchTab('image')">이미지 생성</div>
+    </div>
+
+    <!-- 1번 탭: 나를 소개해요 -->
+    <div id="tab-intro" class="tab-content active">
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" placeholder="홍길동">
+        </div>
+        
+        <div class="form-group">
+            <label for="school">학교</label>
+            <input type="text" id="school" placeholder="포항여자고등학교">
+        </div>
+        
+        <div class="form-group">
+            <label for="age">나이 / 학년</label>
+            <input type="text" id="age" placeholder="1학년, 17살">
+        </div>
+        
+        <div class="form-group">
+            <label for="hobby">좋아하는 것 (취미나 음식)</label>
+            <input type="text" id="hobby" placeholder="빵 만드는것, 커피를 잘 내려요">
+        </div>
+
+        <div class="form-group">
+            <label for="future_me">내가 꿈꾸는 나의 모습</label>
+            <input type="text" id="future_me" placeholder="바리스타, 제빵사, 웹툰작가, 사회복지사">
+        </div>
+
+        <div class="form-group">
+            <label for="reason">꿈꾸게 된 이유</label>
+            <textarea id="reason" rows="2" placeholder="그림 그리는걸 좋아하고 웹툰을 좋아한다"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="effort">나의 꿈을 위한 나의 노력</label>
+            <textarea id="effort" rows="2" placeholder="스토리를 생각해서 한번씩 이야기를 만들어보다. 제빵사 자격증을 준비하고 있다"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="strength">나의 장점 (성격)</label>
+            <textarea id="strength" rows="2" placeholder="도움이 필요한 친구를 잘 도와줘요, 웃음이 많아요, 인사를 잘해요, 만들기를 잘해요"></textarea>
+        </div>
+
+        <!-- 버튼 2개 -->
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="generateSummary()">완료</button>
+            <button class="btn btn-secondary" onclick="generatePrompt()">프롬프트 생성해줘</button>
+        </div>
+
+        <!-- 결과 상자 -->
+        <div class="result-section">
+            <h3>결과 확인하기</h3>
+            <textarea id="output" class="output-box" readonly placeholder="위에서 버튼을 누르면 여기에 프롬프트가 만들어져요!"></textarea>
+            <button class="btn btn-copy" onclick="copyToClipboard()">📋 복사해서 제미나이에 사용하기</button>
+            <div id="toast" class="toast">성공적으로 복사되었습니다! 제미나이(Gemini) 창에 붙여넣으세요!</div>
+        </div>
+    </div>
+
+    <!-- 2번 탭: 이미지 생성 -->
+    <div id="tab-image" class="tab-content">
+        <div class="info-message">
+            🎨 다음 수업 시간에 함께 알아볼<br>'이미지 생성 프롬프트' 공간입니다!
+        </div>
+    </div>
+</div>
+
+<script>
+    // 탭 전환 기능
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        if(tabName === 'intro') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('tab-intro').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('tab-image').classList.add('active');
+        }
+    }
+
+    // 입력 데이터 가져오기 공식
+    function getFormValues() {
+        return {
+            name: document.getElementById('name').value.trim() || "OOO",
+            school: document.getElementById('school').value.trim() || "OOO",
+            age: document.getElementById('age').value.trim() || "OOO",
+            hobby: document.getElementById('hobby').value.trim() || "OOO",
+            future_me: document.getElementById('future_me').value.trim() || "OOO",
+            reason: document.getElementById('reason').value.trim() || "OOO",
+            effort: document.getElementById('effort').value.trim() || "OOO",
+            strength: document.getElementById('strength').value.trim() || "OOO"
+        };
+    }
+
+    // 항목별 글머리 기호 서식 생성 함수
+    function buildBulletList(v) {
+        return `* 이름: ${v.name}
+* 학교: ${v.school}
+* 나이/학년: ${v.age}
+* 좋아하는 것: ${v.hobby}
+* 내가 꿈꾸는 나의 모습: ${v.future_me}
+* 꿈꾸게 된 이유: ${v.reason}
+* 나의 꿈을 위한 나의 노력: ${v.effort}
+* 나의 장점: ${v.strength}`;
+    }
+
+    // [완료] 버튼 기능 (글머리 기호 반영)
+    function generateSummary() {
+        const v = getFormValues();
+        document.getElementById('output').value = buildBulletList(v);
+    }
+
+    // [프롬프트 생성해줘] 버튼 기능 (글머리 기호 및 줄바꿈 서식 유지)
+    function generatePrompt() {
+        const v = getFormValues();
+        const bulletList = buildBulletList(v);
+        
+        const promptText = `${bulletList}
+
+위 내용을 바탕으로 난 자기소개서를 작성하려고해. 대상은 친구는 아니고 불특정 성인이라고 생각하고 존대어를 사용해줘. 10줄 자기소개서 부탁해.`;
+        document.getElementById('output').value = promptText;
+    }
+
+    // [복사하기] 기능
+    function copyToClipboard() {
+        const outputTextArea = document.getElementById('output');
+        
+        if (!outputTextArea.value) {
+            alert('생성된 내용이 없습니다. 먼저 완료나 프롬프트 생성 버튼을 눌러주세요!');
+            return;
+        }
+
+        outputTextArea.select();
+        outputTextArea.setSelectionRange(0, 99999); // 모바일/태블릿 대응
+
+        try {
+            navigator.clipboard.writeText(outputTextArea.value).then(() => {
+                showToast();
+            });
+        } catch (err) {
+            document.execCommand('copy');
+            showToast();
+        }
+    }
+
+    // 토스트 알림 띄우기
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
